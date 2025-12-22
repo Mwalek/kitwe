@@ -1,0 +1,50 @@
+site_name: Kitwe
+site_description: Deterministic infrastructure for AI coding agents
+site_url: https://mwalek.github.io/kitwe
+repo_url: https://github.com/Mwalek/Kitwe
+repo_name: Mwalek/Kitwe
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Configuration: configuration.md
+  - CLI Reference: cli.md
+  - MCP Tools: mcp-tools.md
+  - Architecture: architecture.md
+  - Examples:
+      - Minimal: examples/minimal.md
+      - With Authentication: examples/with-auth.md
+      - With Setup Commands: examples/with-setup.md
+
+markdown_extensions:
+  - tables
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true

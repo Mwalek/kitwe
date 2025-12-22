@@ -1,0 +1,95 @@
+# Kitwe Configuration for Horatius Server
+# ========================================
+# This is an example configuration for the Horatius project.
+# Copy to horatius/packages/server/kitwe.yaml
+#
+# Environment variables referenced here should be defined in .env.test:
+#   E2E_TEST_EMAIL=e2e-test@horatius.local
+#   E2E_TEST_PASSWORD=TestPassword123!
+
+version: 1
+
+project:
+  name: horatius-server
+  # Base URL for tests - supports env var references
+  base_url: $BASE_URL  # Maps to: http://localhost:3000 (or your test server)
+
+# =============================================================================
+# Run Settings (used by: kitwe run)
+# =============================================================================
+run:
+  runner: npm
+  script: test:e2e
+  timeout_seconds: 600
+  artifacts_dir: artifacts/kitwe
+
+  # Pre-test setup commands (run in order before tests)
+  pre_commands:
+    # 1. Start the test database container
+    - argv: ["npm", "run", "test:db:up"]
+
+    # 2. Run database migrations
+    - argv: ["npm", "run", "test:db:migrate"]
+
+    # 3. Create test user and API key
+    - argv: ["npm", "run", "test:e2e:setup"]
+
+    # 4. Seed test data
+    - argv: ["npm", "run", "test:e2e:seed"]
+
+  # Environment variables for test execution
+  env:
+    NODE_ENV: test
+
+# =============================================================================
+# Test Generation Settings (used by: kitwe gen, kitwe plan)
+# =============================================================================
+tests:
+  test_dir: e2e
+  pattern: "**/*.spec.{ts,js}"
+  default_output_path: e2e/generated
+  selector_policy:
+    prefer:
+      - data-testid
+      - role
+      - aria-label
+    avoid:
+      - class
+      - xpath
+
+# =============================================================================
+# Authentication Configuration (used by: kitwe plan, kitwe gen)
+# =============================================================================
+# Horatius uses email/password login at /auth/signin
+# The AI generator will use these env var names to fill in credentials
+#
+# AUTH STRATEGIES:
+#   - no_auth: No authentication needed - test runs without login
+#   - login_in_test: Login steps are INCLUDED in the generated test file (test contains login code)
+#   - login_before_test: AI logs in via browser BEFORE test; test file assumes already authenticated
+auth:
+  # Default auth profile - used when no --auth-profile is specified
+  default:
+    strategy: login_in_test        # Login steps INCLUDED in generated test file
+    credentials:
+      email: E2E_TEST_EMAIL        # Maps to: e2e-test@horatius.local
+      password: E2E_TEST_PASSWORD  # Maps to: TestPassword123!
+
+  # Named profiles for different test scenarios
+  profiles:
+    # Admin user for elevated permission tests
+    # Requires E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD in .env.test
+    admin:
+      strategy: login_in_test      # Login steps INCLUDED in generated test file
+      credentials:
+        email: E2E_ADMIN_EMAIL
+        password: E2E_ADMIN_PASSWORD
+
+    # Pre-authenticated context
+    # AI logs in via browser BEFORE test runs; test file assumes already authenticated
+    # No login steps will be generated - tests run in already-authenticated context
+    cached:
+      strategy: login_before_test  # AI logs in before test; test assumes authenticated
+
+  # Path to environment file for loading credentials
+  env_file: .env.test

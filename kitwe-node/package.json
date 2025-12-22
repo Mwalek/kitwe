@@ -1,0 +1,69 @@
+{
+  "name": "@mwalek/kitwe",
+  "version": "0.0.1",
+  "description": "Deterministic infrastructure for AI coding agents to run Playwright tests",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "kitwe": "./dist/cli.js",
+    "kw": "./dist/cli.js",
+    "kitwe-mcp": "./dist/mcp-server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/cli.js",
+    "test": "vitest",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist/",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "e2e",
+    "automation",
+    "cli",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "ai-agent",
+    "claude",
+    "cursor"
+  ],
+  "author": "Mwalek <https://github.com/Mwalek>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mwalek/kitwe.git"
+  },
+  "homepage": "https://github.com/Mwalek/kitwe#readme",
+  "bugs": {
+    "url": "https://github.com/Mwalek/kitwe/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "env-paths": "^3.0.0",
+    "js-yaml": "^4.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.10.2",
+    "eslint": "^9.39.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.50.0",
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,27 @@
+# AI (internal)
+.claude/
+CLAUDE.md
+.serena/
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.env.local
+*.egg-info/
+dist/
+build/
+
+# uv
+uv.lock
+.python-version
+
+# Products
+products/GravityView/
+products/*/.env
+products/*/.env.local

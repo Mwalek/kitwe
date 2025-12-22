@@ -1,0 +1,175 @@
+# Kitwe Configuration
+# ===================
+# This file configures Kitwe for your project.
+# Place it in your project root as `kitwe.yaml`.
+#
+# Quick Start:
+#   kitwe config init --project myproject
+#   kitwe config validate --project myproject
+#
+# Documentation: See CLAUDE.md for full details
+
+version: 1
+
+# =============================================================================
+# Project Metadata (optional)
+# =============================================================================
+project:
+  name: my-project  # Human-readable project name
+  # base_url: http://localhost:3000         # Literal URL
+  # base_url: $BASE_URL                     # Env var reference
+  # base_url: ${BASE_URL}                   # Env var reference (alternate syntax)
+
+# =============================================================================
+# Run Settings
+# =============================================================================
+# Used by: kitwe run
+#
+# You must configure ONE entrypoint (script OR config_path):
+#
+# Option A: npm script (recommended for most projects)
+#   run:
+#     script: test:e2e
+#
+# Option B: Direct Playwright config
+#   run:
+#     config_path: playwright.config.ts
+
+run:
+  # Entrypoint - choose ONE:
+  script: test:e2e                    # npm/pnpm/yarn script name
+  # config_path: playwright.config.ts  # Or direct Playwright config path
+
+  # Execution settings
+  timeout_seconds: 1200               # Max test run time (20 minutes)
+  artifacts_dir: test-results         # Where to save results
+
+  # Package manager (auto-detected from lockfile if not set)
+  # runner: npm                       # npm, pnpm, yarn, or npx
+
+  # Additional Playwright arguments
+  # args:
+  #   - --headed                      # Run with browser visible
+  #   - --workers=2                   # Limit parallel workers
+
+  # Environment variables for test run
+  # env:
+  #   CI: "true"
+  #   DEBUG: "pw:api"
+
+  # Commands to run before tests (e.g., database setup)
+  # pre_commands:
+  #   - npm run db:reset
+  #   - docker compose up -d
+
+# =============================================================================
+# Test Generation Settings
+# =============================================================================
+# Used by: kitwe gen, kitwe plan
+
+tests:
+  test_dir: e2e                       # Directory containing tests
+  pattern: "**/*.spec.ts"             # Glob pattern for test files
+  default_output_path: e2e/generated.spec.ts  # Default output for new tests
+
+  # Selector preferences for generated tests
+  selector_policy:
+    prefer:
+      - data-testid                   # Most stable
+      - aria-label                    # Accessible
+      - role                          # Semantic
+    avoid:
+      - nth-child                     # Fragile
+      - css-hash                      # Generated, unstable
+
+# =============================================================================
+# Authentication Configuration
+# =============================================================================
+# Used by: kitwe plan, kitwe gen
+#
+# Define reusable auth profiles for different user types.
+# Values are environment variable NAMES (not the actual secrets).
+#
+# AUTH STRATEGIES:
+#   - no_auth: No authentication needed - test runs without login
+#   - login_in_test: Login steps are INCLUDED in the generated test file (test contains login code)
+#   - login_before_test: AI logs in via browser BEFORE test; test file assumes already authenticated
+#
+# Usage:
+#   kitwe plan --project myproject --auth-profile admin
+#   kitwe gen --project myproject --spec spec.yaml --auth-profile readonly
+
+auth:
+  # Default profile - used when no --auth-profile specified
+  default:
+    strategy: login_in_test           # Login steps INCLUDED in generated test file
+    credentials:
+      email: E2E_TEST_EMAIL           # Env var containing email
+      password: E2E_TEST_PASSWORD     # Env var containing password
+
+  # Named profiles for different user roles
+  profiles:
+    # Admin user with elevated permissions
+    admin:
+      strategy: login_in_test         # Login steps INCLUDED in generated test file
+      credentials:
+        email: E2E_ADMIN_EMAIL
+        password: E2E_ADMIN_PASSWORD
+
+    # Read-only user for permission testing
+    readonly:
+      strategy: login_in_test         # Login steps INCLUDED in generated test file
+      credentials:
+        email: E2E_READONLY_EMAIL
+        password: E2E_READONLY_PASSWORD
+
+    # Pre-authenticated context
+    # AI logs in via browser BEFORE test runs; test file assumes already authenticated
+    # No login steps will be generated - tests run in already-authenticated context
+    cached:
+      strategy: login_before_test     # AI logs in before test; test assumes authenticated
+
+  # Path to .env file for loading credentials (optional)
+  # env_file: .env.test
+
+# =============================================================================
+# Minimal Configuration Examples
+# =============================================================================
+#
+# Example 1: Basic project (no auth)
+# ----------------------------------
+# version: 1
+# run:
+#   script: test:e2e
+#
+# Example 2: With default auth (login code in test)
+# -------------------------------------------------
+# version: 1
+# run:
+#   script: test:e2e
+# auth:
+#   default:
+#     strategy: login_in_test  # Login steps INCLUDED in generated test file
+#     credentials:
+#       email: E2E_EMAIL
+#       password: E2E_PASSWORD
+#
+# Example 3: Multiple user roles
+# ------------------------------
+# version: 1
+# run:
+#   script: test:e2e
+# auth:
+#   default:
+#     strategy: login_in_test  # Login steps INCLUDED in generated test file
+#     credentials:
+#       email: E2E_USER_EMAIL
+#       password: E2E_USER_PASSWORD
+#   profiles:
+#     admin:
+#       strategy: login_in_test
+#       credentials:
+#         email: E2E_ADMIN_EMAIL
+#         password: E2E_ADMIN_PASSWORD
+#     cached:
+#       strategy: login_before_test  # AI logs in before test; test assumes authenticated

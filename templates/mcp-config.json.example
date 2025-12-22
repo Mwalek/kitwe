@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "kitwe": {
+      "command": "kitwe-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}
