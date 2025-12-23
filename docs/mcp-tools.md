@@ -2,19 +2,136 @@
 
 Kitwe's primary interface for AI agents is the MCP server.
 
-## Setup
+## Installation
 
-Add to Claude Desktop config (`claude_desktop_config.json`):
+First, install Kitwe globally:
+
+```bash
+npm install -g @mwalek/kitwe
+```
+
+Then configure your AI tool below.
+
+---
+
+## Setup by Tool
+
+### VS Code with Copilot
+
+Add to your VS Code settings (JSON):
+
+```json
+{
+  "mcp": {
+    "servers": {
+      "kitwe": {
+        "command": "kitwe-mcp"
+      }
+    }
+  }
+}
+```
+
+Or via CLI:
+
+```bash
+code --add-mcp '{"name":"kitwe","command":"kitwe-mcp"}'
+```
+
+---
+
+### Claude Desktop
+
+Add to your Claude Desktop config:
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
 ```json
 {
   "mcpServers": {
     "kitwe": {
-      "command": "kitwe-mcp",
-      "args": []
+      "command": "kitwe-mcp"
     }
   }
 }
+```
+
+---
+
+### Claude Code
+
+Run in your terminal:
+
+```bash
+claude mcp add --transport stdio kitwe -- kitwe-mcp
+```
+
+To share with your team (creates `.mcp.json`):
+
+```bash
+claude mcp add --transport stdio kitwe --scope project -- kitwe-mcp
+```
+
+---
+
+### Cursor
+
+Open **Cursor Settings** → **MCP** → **Add new MCP server**
+
+- **Name**: `kitwe`
+- **Type**: `command`
+- **Command**: `kitwe-mcp`
+
+Or add to `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "kitwe": {
+      "command": "kitwe-mcp"
+    }
+  }
+}
+```
+
+---
+
+### Windsurf
+
+Open **Windsurf Settings** → **Cascade** → **MCP Servers** → **Add Server** → **Add custom server**
+
+```json
+{
+  "mcpServers": {
+    "kitwe": {
+      "command": "kitwe-mcp"
+    }
+  }
+}
+```
+
+---
+
+### Using npx (without global install)
+
+If you prefer not to install globally, use `npx`:
+
+```json
+{
+  "mcpServers": {
+    "kitwe": {
+      "command": "npx",
+      "args": ["-y", "-p", "@mwalek/kitwe", "kitwe-mcp"]
+    }
+  }
+}
+```
+
+For Claude Code:
+
+```bash
+claude mcp add --transport stdio kitwe -- npx -y -p @mwalek/kitwe kitwe-mcp
 ```
 
 ---

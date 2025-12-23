@@ -61,18 +61,13 @@ kw run --project myapp
 
 ### Via MCP (AI Agents)
 
-AI agents use the MCP server. Add to Claude Desktop config (`claude_desktop_config.json`):
+AI agents use the MCP server. Quick setup for Claude Code:
 
-```json
-{
-  "mcpServers": {
-    "kitwe": {
-      "command": "kitwe-mcp",
-      "args": []
-    }
-  }
-}
+```bash
+claude mcp add --transport stdio kitwe -- kitwe-mcp
 ```
+
+For other tools (Claude Desktop, VS Code/Copilot, Cursor, Windsurf), see [MCP Tools](mcp-tools.md#setup-by-tool).
 
 The agent can then call:
 
