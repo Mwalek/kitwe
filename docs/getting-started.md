@@ -67,7 +67,7 @@ AI agents use the MCP server. Quick setup for Claude Code:
 claude mcp add --transport stdio kitwe -- kitwe-mcp
 ```
 
-For other tools (Claude Desktop, VS Code/Copilot, Cursor, Windsurf), see [MCP Tools](mcp-tools.md#setup-by-tool).
+For other tools (Claude Desktop, VS Code/Copilot, Cursor, Windsurf, Codex), see [MCP Tools](mcp-tools.md#setup-by-tool).
 
 The agent can then call:
 

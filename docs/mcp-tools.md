@@ -113,6 +113,23 @@ Open **Windsurf Settings** → **Cascade** → **MCP Servers** → **Add Server*
 
 ---
 
+### Codex (OpenAI)
+
+Run in your terminal:
+
+```bash
+codex mcp add kitwe -- kitwe-mcp
+```
+
+Or add to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.kitwe]
+command = "kitwe-mcp"
+```
+
+---
+
 ### Using npx (without global install)
 
 If you prefer not to install globally, use `npx`:
