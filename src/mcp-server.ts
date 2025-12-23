@@ -84,7 +84,11 @@ const server = new McpServer({
 
 server.tool(
   'list_projects',
-  'List all registered Kitwe projects. Returns a dictionary mapping project names to their paths.',
+  `List all registered Kitwe projects. Returns a dictionary mapping project names to their absolute paths.
+
+WHEN TO USE: Call this FIRST when you don't know the project name. If user mentions a project by name, use get_project_context directly with that name.
+
+NEXT STEP: After getting the project name, call get_project_context to get comprehensive test context.`,
   {},
   async () => {
     const projects = listProjects();
@@ -103,7 +107,9 @@ server.tool(
 
 server.tool(
   'get_project_root',
-  'Get the root path for a registered project.',
+  `Get the root filesystem path for a registered project.
+
+WHEN TO USE: Only use when you specifically need the path string. In most cases, use get_project_context instead - it accepts project names directly and provides much more useful information.`,
   {
     project_name: z.string().describe('Name of the registered project'),
   },
@@ -144,9 +150,25 @@ server.tool(
 
 server.tool(
   'get_project_context',
-  'Get complete Kitwe context for this project. This should be the FIRST tool called when working with a project\'s tests. Returns a comprehensive markdown document explaining how to use Kitwe to run tests, interpret results, and access artifacts.',
+  `★★★ PRIMARY TOOL - START HERE ★★★
+
+Get complete Kitwe context for a project. Returns comprehensive markdown documentation explaining:
+- How to run tests with Kitwe
+- How to interpret test results
+- How to access artifacts (traces, screenshots, logs)
+- Authentication configuration
+- Pre-test setup commands
+
+ALWAYS CALL THIS FIRST when working with a project's tests. Do NOT call read_config, get_config_file_path, or other low-level tools directly.
+
+INPUT: Accepts either a registered project name (e.g., "horatius") OR an absolute path to the project directory.
+
+WORKFLOW:
+1. If you know the project name → call this tool directly
+2. If you don't know the project name → call list_projects first, then call this
+3. If project has no config → response will guide you to use create_config`,
   {
-    project: z.string().describe('Project name (from registry) or path to the project root directory'),
+    project: z.string().describe('Project name (from registry) or absolute path to the project root directory'),
   },
   async ({ project }) => {
     // Try to resolve as project name first, fall back to treating as path
@@ -185,9 +207,13 @@ server.tool(
 
 server.tool(
   'read_config',
-  'Parse and return kitwe.yaml configuration for a project.',
+  `Parse and return the raw kitwe.yaml configuration for a project.
+
+⚠️ LOW-LEVEL TOOL - Prefer get_project_context instead, which provides formatted context including this config.
+
+WHEN TO USE: Only when you specifically need the raw YAML config structure (e.g., to understand what fields to edit). For test execution context, use get_project_context.`,
   {
-    project_root: z.string().describe('Path to the project root directory'),
+    project_root: z.string().describe('Absolute path to the project root directory'),
   },
   async ({ project_root }) => {
     try {
@@ -222,9 +248,11 @@ server.tool(
 
 server.tool(
   'get_config_file_path',
-  'Get the path to kitwe.yaml for a project.',
+  `Get the filesystem path to kitwe.yaml for a project. Returns the path and whether the file exists.
+
+WHEN TO USE: Only when you need to edit an existing config file with AI file-editing tools. For creating new configs, use create_config instead.`,
   {
-    project_root: z.string().describe('Path to the project root directory'),
+    project_root: z.string().describe('Absolute path to the project root directory'),
   },
   async ({ project_root }) => {
     const configPath = getConfigPath(project_root);
@@ -243,7 +271,22 @@ server.tool(
 
 server.tool(
   'create_config',
-  'Create a new kitwe.yaml configuration file. Use get_config_schema first to understand available options. Fails if config already exists (use AI edit tools for existing configs).',
+  `Create a new kitwe.yaml configuration file for a project.
+
+PREREQUISITE: Call get_config_schema first to understand what questions to ask the user about their test setup.
+
+WHEN TO USE: When get_project_context indicates the project has no config (can_run_tests: false).
+
+BEHAVIOR:
+- Fails if kitwe.yaml already exists (use AI file-editing tools to modify existing configs)
+- Only project_path is required; all other fields are optional
+- Minimal config: just project_path with run.script
+
+WORKFLOW:
+1. Call get_config_schema to see available options
+2. Ask user about their test setup (npm script, test directory, auth, etc.)
+3. Call create_config with their answers
+4. Call get_project_context to verify the config works`,
   {
     project_path: z.string().describe('Absolute path to the project directory'),
     project: z.object({
@@ -340,7 +383,11 @@ server.tool(
 
 server.tool(
   'get_config_schema',
-  'Get the configuration schema with descriptions and questions for each property. Use this to understand what values to collect before calling create_config.',
+  `Get the kitwe.yaml configuration schema with descriptions and suggested questions for each property.
+
+WHEN TO USE: Before calling create_config, to understand what information to collect from the user.
+
+RETURNS: Schema with field descriptions and AI-friendly prompts for gathering user requirements.`,
   {},
   async () => {
     const schema = formatSchemaForMcp();
@@ -359,9 +406,13 @@ server.tool(
 
 server.tool(
   'list_auth_profiles',
-  'List available authentication profiles for a project.',
+  `List available authentication profiles defined in kitwe.yaml for a project.
+
+WHEN TO USE: When writing tests that need authentication and you need to know what profiles are available (e.g., "admin", "user", "guest").
+
+NOTE: get_project_context already includes auth profile information in its output.`,
   {
-    project_root: z.string().describe('Path to the project root directory'),
+    project_root: z.string().describe('Absolute path to the project root directory'),
   },
   async ({ project_root }) => {
     try {
@@ -404,10 +455,14 @@ server.tool(
 
 server.tool(
   'resolve_auth_profile',
-  'Resolve authentication configuration for a specific profile.',
+  `Resolve authentication configuration for a specific profile, returning strategy and credentials.
+
+WHEN TO USE: When you need the actual credential environment variable names for a specific auth profile (e.g., to write login code in a test).
+
+RETURNS: Auth strategy ("no_auth", "login_in_test", "login_before_test") and credential env var names.`,
   {
-    project_root: z.string().describe('Path to the project root directory'),
-    profile: z.string().optional().describe('Name of the auth profile to resolve. If not provided, uses the default profile.'),
+    project_root: z.string().describe('Absolute path to the project root directory'),
+    profile: z.string().optional().describe('Name of the auth profile to resolve (e.g., "admin"). If not provided, uses the default profile.'),
   },
   async ({ project_root, profile }) => {
     try {
@@ -454,15 +509,27 @@ server.tool(
 
 server.tool(
   'run_tests',
-  'Run Playwright tests and return results with artifacts.',
+  `Execute Playwright tests and return structured results with artifact paths.
+
+PREREQUISITE: Project must have a kitwe.yaml config. Call get_project_context first to verify can_run_tests: true.
+
+RETURNS: Test results including:
+- exit_code (0 = all passed)
+- stdout/stderr
+- Paths to artifacts (traces, screenshots, logs)
+
+WORKFLOW:
+1. Call get_project_context → verify can_run_tests: true
+2. Call run_tests with project_root
+3. If tests fail, use list_artifacts and read_artifact_file to analyze failures`,
   {
-    project_root: z.string().describe('Path to the project root directory'),
+    project_root: z.string().describe('Absolute path to the project root directory'),
     artifacts_dir: z.string().optional().describe('Where to save logs and reports. Defaults to <project>/artifacts/kitwe.'),
-    timeout_seconds: z.number().optional().default(300).describe('Maximum execution time (default: 300)'),
-    script: z.string().optional().describe('npm script name to run (e.g., "test:e2e")'),
-    config_path: z.string().optional().describe('Path to playwright config relative to project_root'),
-    spec_file: z.string().optional().describe('Optional specific test file to run'),
-    skip_setup: z.boolean().optional().default(false).describe('Skip pre_commands from config'),
+    timeout_seconds: z.number().optional().default(300).describe('Maximum execution time in seconds (default: 300)'),
+    script: z.string().optional().describe('npm script name to run (e.g., "test:e2e"). Uses config default if not specified.'),
+    config_path: z.string().optional().describe('Path to playwright.config.ts relative to project_root'),
+    spec_file: z.string().optional().describe('Specific test file to run (e.g., "auth.spec.ts")'),
+    skip_setup: z.boolean().optional().default(false).describe('Skip pre_commands from config (e.g., db:reset)'),
   },
   async ({ project_root, artifacts_dir, timeout_seconds, script, config_path, spec_file, skip_setup }) => {
     // Load config for defaults (env vars, runner, pre_commands, etc.)
@@ -514,10 +581,18 @@ server.tool(
 
 server.tool(
   'list_artifacts',
-  'List available artifacts for a test.',
+  `List available artifacts (traces, screenshots, logs) for a specific test.
+
+WHEN TO USE: After run_tests returns failures, to find artifacts for a specific failing test.
+
+WORKFLOW:
+1. run_tests → test fails
+2. list_test_artifacts → get list of tests with artifacts
+3. list_artifacts with test_name → get artifact paths
+4. read_artifact_file → read specific artifact content`,
   {
-    project_root: z.string().describe('Path to the project root directory'),
-    test_name: z.string().describe('Name of the test (used in artifact directory structure)'),
+    project_root: z.string().describe('Absolute path to the project root directory'),
+    test_name: z.string().describe('Name of the test (from Playwright output, e.g., "auth-login-success")'),
   },
   async ({ project_root, test_name }) => {
     const artifactsBase = resolve(project_root, 'artifacts', 'kitwe');
@@ -550,9 +625,13 @@ server.tool(
 
 server.tool(
   'list_test_artifacts',
-  'List all tests that have artifacts.',
+  `List all tests that have generated artifacts (from previous test runs).
+
+WHEN TO USE: After run_tests, to see which tests have artifacts available for analysis.
+
+RETURNS: List of test names that have artifact directories (traces, screenshots, etc.).`,
   {
-    project_root: z.string().describe('Path to the project root directory'),
+    project_root: z.string().describe('Absolute path to the project root directory'),
   },
   async ({ project_root }) => {
     const artifactsBase = resolve(project_root, 'artifacts', 'kitwe');
@@ -574,9 +653,13 @@ server.tool(
 
 server.tool(
   'collect_test_artifacts',
-  'Collect artifacts from Playwright output directories.',
+  `Collect and organize artifacts from Playwright's raw output directories.
+
+WHEN TO USE: When you need to find artifacts in Playwright's default output locations (test-results/, playwright-report/) rather than Kitwe's organized artifact directory.
+
+NOTE: run_tests automatically organizes artifacts into a standard structure. Use this only for manual artifact discovery.`,
   {
-    project_root: z.string().describe('Path to the project root directory'),
+    project_root: z.string().describe('Absolute path to the project root directory'),
   },
   async ({ project_root }) => {
     const searchDirs = getPlaywrightOutputDirs(project_root);
@@ -602,9 +685,15 @@ server.tool(
 
 server.tool(
   'read_artifact_file',
-  'Read the contents of an artifact file.',
+  `Read the contents of an artifact file (log, trace summary, etc.).
+
+WHEN TO USE: After list_artifacts returns file paths, to read specific artifact content for failure analysis.
+
+SUPPORTS: Text files (logs, trace summaries). For binary files (screenshots, videos), use the path with AI vision tools.
+
+RETURNS: File content with truncation info if file exceeds max_lines.`,
   {
-    artifact_path: z.string().describe('Path to the artifact file'),
+    artifact_path: z.string().describe('Absolute path to the artifact file'),
     max_lines: z.number().optional().default(500).describe('Maximum number of lines to return (default: 500)'),
   },
   async ({ artifact_path, max_lines }) => {
