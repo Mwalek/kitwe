@@ -5,7 +5,6 @@ Thanks for your interest in contributing to Kitwe!
 ## Development Setup
 
 ```bash
-cd kitwe-node
 npm install
 npm run build
 npm test
@@ -44,14 +43,13 @@ npm test -- tests/config.test.ts
 ## Project Structure
 
 ```
-kitwe-node/
-  src/
-    cli.ts              # CLI entry point
-    mcp-server.ts       # MCP server
-    core/               # Infrastructure modules
-    runner/             # Test execution
-    types/              # TypeScript definitions
-  tests/                # Test files
+src/
+  cli.ts              # CLI entry point
+  mcp-server.ts       # MCP server
+  core/               # Infrastructure modules
+  validate/           # Test execution
+  types/              # TypeScript definitions
+tests/                # Test files
 ```
 
 ## Pull Request Guidelines

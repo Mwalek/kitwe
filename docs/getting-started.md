@@ -14,7 +14,7 @@ npm install -g @mwalek/kitwe
 
 ```bash
 git clone https://github.com/Mwalek/kitwe.git
-cd kitwe/kitwe-node
+cd kitwe
 npm install && npm run build && npm link
 ```
 

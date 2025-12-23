@@ -205,34 +205,34 @@ Test execution engine.
 ## Directory Structure
 
 ```
-kitwe-node/
-├── src/
-│   ├── cli.ts              # CLI entry point
-│   ├── mcp-server.ts       # MCP server (primary interface)
-│   ├── index.ts            # Package exports
-│   │
-│   ├── commands/           # CLI command handlers
-│   │   ├── project.ts      # project add/list/show/remove
-│   │   ├── config.ts       # config show/init/validate
-│   │   └── run.ts          # run command
-│   │
-│   ├── core/               # Core infrastructure
-│   │   ├── registry.ts     # Project registry management
-│   │   ├── config.ts       # Configuration loading/validation
-│   │   ├── artifacts.ts    # Artifact collection/management
-│   │   ├── context-formatter.ts  # AI context generation
-│   │   └── paths.ts        # Path resolution utilities
-│   │
-│   ├── runner/             # Test execution
-│   │   ├── executor.ts     # Main execution engine
-│   │   ├── resolver.ts     # Command resolution
-│   │   └── formatter.ts    # Output formatting
-│   │
-│   └── types/              # TypeScript definitions
-│       └── index.ts        # All type exports
+src/
+├── cli.ts              # CLI entry point
+├── mcp-server.ts       # MCP server (primary interface)
+├── index.ts            # Package exports
 │
-├── package.json
-└── tsconfig.json
+├── commands/           # CLI command handlers
+│   ├── project.ts      # project add/list/show/remove
+│   ├── config.ts       # config show/init/validate
+│   └── run.ts          # run command
+│
+├── core/               # Core infrastructure
+│   ├── registry.ts     # Project registry management
+│   ├── config.ts       # Configuration loading/validation
+│   ├── artifacts.ts    # Artifact collection/management
+│   ├── context-formatter.ts  # AI context generation
+│   └── paths.ts        # Path resolution utilities
+│
+├── validate/           # Test execution
+│   ├── executor.ts     # Main execution engine
+│   ├── resolver.ts     # Command resolution
+│   └── formatter.ts    # Output formatting
+│
+└── types/              # TypeScript definitions
+    └── index.ts        # All type exports
+
+tests/                  # Unit tests
+package.json
+tsconfig.json
 ```
 
 ---
