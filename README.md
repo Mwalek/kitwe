@@ -2,6 +2,8 @@
 
 > **Kitwe helps AI agents understand your test suite.**
 
+[![Documentation](https://img.shields.io/badge/docs-mwalek.github.io%2Fkitwe-blue)](https://mwalek.github.io/kitwe/)
+
 Kitwe is **deterministic infrastructure** for AI coding agents. It provides the context and execution environment they need to create Playwright tests that actually work.
 
 ## The Problem
