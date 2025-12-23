@@ -33,7 +33,7 @@ Your `package.json` should have the script defined:
 ## Running Tests
 
 ```bash
-tp run --project myapp
+kw run --project myapp
 ```
 
 Or via MCP:

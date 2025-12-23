@@ -60,7 +60,7 @@ setup:
 Sometimes you want to run tests without setup (e.g., debugging):
 
 ```bash
-tp run --project myapp --skip-setup
+kw run --project myapp --skip-setup
 ```
 
 Or via MCP:

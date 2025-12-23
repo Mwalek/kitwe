@@ -26,10 +26,10 @@ Register your project with Kitwe:
 kitwe project add myapp /path/to/project
 ```
 
-Or use the `tp` alias:
+Or use the `kw` alias:
 
 ```bash
-tp project add myapp /path/to/project
+kw project add myapp /path/to/project
 ```
 
 ## Create Configuration
@@ -48,7 +48,7 @@ This minimal config tells Kitwe which npm script runs your Playwright tests.
 You can also generate a template:
 
 ```bash
-tp config init --project myapp
+kw config init --project myapp
 ```
 
 ## Run Tests
@@ -56,7 +56,7 @@ tp config init --project myapp
 ### Via CLI
 
 ```bash
-tp run --project myapp
+kw run --project myapp
 ```
 
 ### Via MCP (AI Agents)
@@ -86,13 +86,13 @@ run_tests(project_root="/path/to/myapp")  # Execute tests
 Check your project is registered:
 
 ```bash
-tp project list
+kw project list
 ```
 
 Validate your configuration:
 
 ```bash
-tp config validate --project myapp
+kw config validate --project myapp
 ```
 
 ## Next Steps

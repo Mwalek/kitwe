@@ -1,11 +1,11 @@
 # CLI Reference
 
-Kitwe provides a command-line interface available as `kitwe` or `tp` (alias).
+Kitwe provides a command-line interface available as `kitwe` or `kw` (alias).
 
 ## Commands Overview
 
 ```
-kitwe (tp)
+kitwe (kw)
 ├── project   # Manage project registry
 ├── config    # Manage configuration
 └── run       # Execute tests
@@ -37,7 +37,7 @@ kitwe project add <name> <path> [--force]
 **Example:**
 
 ```bash
-tp project add myapp /Users/me/code/myapp
+kw project add myapp /Users/me/code/myapp
 ```
 
 ---
@@ -117,8 +117,8 @@ kitwe config show [options]
 **Example:**
 
 ```bash
-tp config show --project myapp
-tp config show --project-root /path/to/project --json
+kw config show --project myapp
+kw config show --project-root /path/to/project --json
 ```
 
 ---
@@ -141,8 +141,8 @@ kitwe config init [options]
 **Example:**
 
 ```bash
-tp config init --project myapp
-tp config init --project myapp --with-auth
+kw config init --project myapp
+kw config init --project myapp --with-auth
 ```
 
 ---
@@ -207,37 +207,37 @@ kitwe run [spec-file] [options]
 Run all E2E tests:
 
 ```bash
-tp run --project myapp --script test:e2e
+kw run --project myapp --script test:e2e
 ```
 
 Run specific spec file:
 
 ```bash
-tp run --project myapp auth.spec.ts
+kw run --project myapp auth.spec.ts
 ```
 
 Run with verbose output and save JSON:
 
 ```bash
-tp run --project myapp -v -j results.json
+kw run --project myapp -v -j results.json
 ```
 
 Run with extended timeout:
 
 ```bash
-tp run --project myapp --timeout 600
+kw run --project myapp --timeout 600
 ```
 
 Run with additional Playwright args:
 
 ```bash
-tp run --project myapp --args "--workers=4" "--headed"
+kw run --project myapp --args "--workers=4" "--headed"
 ```
 
 Skip setup commands:
 
 ```bash
-tp run --project myapp --skip-setup
+kw run --project myapp --skip-setup
 ```
 
 ---
