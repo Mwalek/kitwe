@@ -9,7 +9,7 @@ import { createProjectCommand } from './commands/project.js';
 import { createConfigCommand } from './commands/config.js';
 import { createRunCommand } from './commands/run.js';
 
-const VERSION = '0.3.0';
+const VERSION = '0.0.1';
 
 const program = new Command();
 
